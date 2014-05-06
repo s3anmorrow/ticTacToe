@@ -63,7 +63,7 @@ var AssetManager = function() {
 				break;
 			case createjs.LoadQueue.SOUND:
 				// sound loaded
-				// ???????????????????????????? - not sure we need with SoundJS
+				// not sure we need with SoundJS
 				//sounds.push(e.result);
 				break;
         }
@@ -96,12 +96,6 @@ var AssetManager = function() {
 		sprite.currentFrame = 0;
 		return sprite;
 	}
-
-	/*
-	this.getSounds = function() {
-		return sounds;
-	}
-	*/
 
 	this.getProgress = function() {
 		return (counter/total);

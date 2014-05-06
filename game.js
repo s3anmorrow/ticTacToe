@@ -6,12 +6,11 @@
 var stage = null;
 var canvas = null;
 
-// array of all game objects currently in use
-var usedList;
 // game objects
-//var background, sky, gameScreen, scoreboard, redPlane, prison1, prison2, prison3, redFactory, blueFactory, redBunker, blueBunker, tower, balloon, landscape;
+var gameOverScreen, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
 // object to preload and handle all assets (spritesheet and sounds)
 var assetManager;
+
 // state of the game
 var state;
 
@@ -111,33 +110,79 @@ function onSetup() {
 	console.log(">> setup");
 	// kill event listeners
 	//document.removeEventListener("onAssetLoaded", gameScreen.progressMe);
-	//document.removeEventListener("onAssetsLoaded", onSetup);
+	document.removeEventListener("onAssetsLoaded", onSetup);
 
 	// setup listener for ticker to actually update the stage
 	//createjs.Ticker.setFPS(GameConstants.FRAME_RATE);
 	//createjs.Ticker.addEventListener("tick", onTick);
 
 
-
+    /*
+    // CLIP TESTING WITH ASSET MANAGER
     var clip = assetManager.getClip("TicTac");
-
-    console.log("game.js test: " + clip);
     clip.gotoAndStop("xPlaced");
-
     stage.addChild(clip);
+    stage.update();
+    */
+
+    // initialization
+    /*
+    title = new Title();
+    title.x = -17;
+    title.y = 16;
+    this.addChild(title);
+    */
+
+    ticTac0 = new TicTac();
+    ticTac0.positionMe(50,86);
+
+    ticTac1 = new TicTac();
+    ticTac1.positionMe(112,86);
+
+    ticTac2 = new TicTac();
+    ticTac2.positionMe(174,86);
+
+    ticTac3 = new TicTac();
+    ticTac3.positionMe(50,150);
+
+    ticTac4 = new TicTac();
+    ticTac4.positionMe(112,150);
+
+    ticTac5 = new TicTac();
+    ticTac5.positionMe(174,150);
+
+    ticTac6 = new TicTac();
+    ticTac6.positionMe(50,212);
+
+    ticTac7 = new TicTac();
+    ticTac7.positionMe(112,212);
+
+    ticTac8 = new TicTac();
+    ticTac8.positionMe(174,212);
+
     stage.update();
 
     /*
-	// setup event listeners for keyboard keys
-	document.addEventListener("keydown", onKeyDown);
-	document.addEventListener("keyup", onKeyUp);
+    winningLines = new WinningLines();
+    winningLines.x = 50;
+    winningLines.y = 86;
+    this.addChild(winningLines);
 
+    // initialization
+    gameOverScreen = new GameOverScreen();
+    gameOverScreen.btnPlayAgain.addEventListener(MouseEvent.CLICK, onReset);
+
+    // construct an array referencing all ticTac objects in winning combinations
+    aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],
+                           [ticTac0,ticTac3,ticTac6],[ticTac1,ticTac4,ticTac7],[ticTac2,ticTac5,ticTac8],
+                           [ticTac0,ticTac4,ticTac8],[ticTac2,ticTac4,ticTac6]);
+    */
+
+
+
+    /*
 	// game ready - show intro gameScreen
 	gameScreen.showMe("Intro");
-
-	// construct sky object for adding clouds to
-	sky = new createjs.Container();
-	stage.addChild(sky);
 
 	// change state of game
 	state = GameConstants.STATE_INTRO;
