@@ -1,3 +1,10 @@
+// IDEAS FOR LESSONS FOR COURSE
+// variable scope - different in event handlers and this.method() of classes - bind() method solution or varaible solution
+// custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
+
+
+
+
 // Tic Tac Toe implemented in HTML5
 // Sean Morrow
 // May 2014
@@ -8,6 +15,11 @@ var canvas = null;
 var turnCount = 0;
 var aWinCombos = null;
 var winner = 0;
+
+
+// ????????????????
+var me = this;
+
 
 // game objects
 var btnPlayAgain, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
@@ -22,12 +34,10 @@ var GameConstants = {
 // ------------------------------------------------------------ private methods
 
 function resetMe() {
-	/*
     // resetting all ticTac objects
-	for (var n:int=0; n<9; n++) {
+	for (var n=0; n<9; n++) {
 		this["ticTac" + n].resetMe();
 	}
-    */
 
 	// reset winning lines
 	winningLines.gotoAndStop(8);
@@ -36,12 +46,37 @@ function resetMe() {
 	turnCount = 0;
 
 	// setup event listeners
-	//this.addEventListener(TicTac.PLAYER_FINISHED, onPlayerFinished, true);
-	//this.addEventListener(TicTac.COMPUTER_FINISHED, onComputerFinished, true);
-	//this.addEventListener(TicTac.TURN_FINISHED, onTurnFinished, true);
+	document.addEventListener("playerFinished", onPlayerFinished.bind(this), true);
+	document.addEventListener("computerFinished", onComputerFinished, true);
+	document.addEventListener("turnFinished", onTurnFinished, true);
 
     stage.update();
 }
+
+function checkWin() {
+    // scroll through all combinations of wins
+	for (var n=0; n<aWinCombos.length; n++) {
+		if ((aWinCombos[n][0].getType() == TicTacState.X) && (aWinCombos[n][1].getType() == TicTacState.X) && (aWinCombos[n][2].getType() == TicTacState.X)) {
+			winner = TicTacState.X;
+			winningLines.gotoAndStop(n + 2);
+			break;
+		} else if ((aWinCombos[n][0].getType() == TicTacState.O) && (aWinCombos[n][1].getType() == TicTacState.O) && (aWinCombos[n][2].getType() == TicTacState.O)) {
+			winner = TicTacState.O;
+			winningLines.gotoAndStop(n + 2);
+			break;
+		}
+	}
+
+	if ((winner != 0) || (turnCount >= 9)) {
+		// game over
+		document.removeEventListener("playerFinished", onPlayerFinished, true);
+        document.removeEventListener("computerFinished", onComputerFinished, true);
+        document.removeEventListener("turnFinished", onTurnFinished, true);
+		// add play again button
+		stage.addChild(btnPlayAgain);
+	}
+}
+
 
 
 function randomMe(low, high) {
@@ -72,44 +107,17 @@ function onInit() {
     // enable mouseover events for the stage - disabled by default since they can be expensive
     stage.enableMouseOver();
 
-	// setup listener for when assetManager has loaded the gameScreen assets
-	//document.addEventListener("onScreensLoaded", onPreloadAssets);
 	// construct preloader object to load spritesheet and sound assets
 	assetManager = new AssetManager();
-	// load screens first so I can display the preload gameScreen
-	//assetManager.loadScreens();
-
-    // !!!!!!!!!!!!!! TESTING
-    // jumping right to loading assets for now
-    onPreloadAssets();
-}
-
-function onPreloadAssets() {
-	console.log(">> preloading assets");
-
-    // kill eventlistener
-	//document.removeEventListener("onScreensLoaded", onPreloadAssets);
-
-	// construct gameScreen object
-	//gameScreen = new Screen();
-	//gameScreen.showMe("Preload");
-	// setup listeners for when assetManager has loaded each asset and all assets
-	//document.addEventListener("onAssetLoaded", gameScreen.progressMe);
-	document.addEventListener("onAssetsLoaded", onSetup);
-	// load the rest of the assets (minus gameScreen assets)
+    document.addEventListener("onAssetsLoaded", onSetup);
+    // load the assets
 	assetManager.loadAssets();
 }
 
 function onSetup() {
 	console.log(">> setup");
-	// kill event listeners
-	//document.removeEventListener("onAssetLoaded", gameScreen.progressMe);
+	// kill event listener
 	document.removeEventListener("onAssetsLoaded", onSetup);
-
-	// setup listener for ticker to actually update the stage
-	//createjs.Ticker.setFPS(GameConstants.FRAME_RATE);
-	//createjs.Ticker.addEventListener("tick", onTick);
-
 
     /*
     // CLIP TESTING WITH ASSET MANAGER
@@ -161,57 +169,103 @@ function onSetup() {
 
     // initialization
     btnPlayAgain = assetManager.getClip("BtnPlayAgain");
-    //btnPlayAgain.addEventListener(MouseEvent.CLICK, onReset);
+    btnPlayAgain.addEventListener("click", onReset);
 
     // construct an array referencing all ticTac objects in winning combinations
     aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],
                            [ticTac0,ticTac3,ticTac6],[ticTac1,ticTac4,ticTac7],[ticTac2,ticTac5,ticTac8],
                            [ticTac0,ticTac4,ticTac8],[ticTac2,ticTac4,ticTac6]);
 
-    resetMe();
-
     // update the stage
     stage.update();
-    console.log(">> intro gameScreen ready");
+
+    resetMe();
 }
 
-function onGameEvent(e) {
-	console.log("gameEvent: " + e.id);
+function onComputerFinished(e) {
+    console.log("computer finished");
+}
 
+function onPlayerFinished(e) {
+    console.log("player finished");
 
-	// what type of event has occurred?
-	switch (e.id){
-		case "planeKilled":
+	var computerPlayed = false;
 
+	// PASS ONE
+	// is the computer only one O away from winning? if so then complete the win!
+	for (var n=0; n<aWinCombos.length; n++) {
+		// check combinations for computer about to win (two Os and a NONE)
+		if ((aWinCombos[n][0].getType() == TicTacState.O) && (aWinCombos[n][1].getType() == TicTacState.O) && (aWinCombos[n][2].getType() == TicTacState.NONE)) {
+			// complete the win
+			aWinCombos[n][2].computeMe();
+			computerPlayed = true;
 			break;
+		} else if ((aWinCombos[n][0].getType() == TicTacState.O) && (aWinCombos[n][1].getType() == TicTacState.NONE) && (aWinCombos[n][2].getType() == TicTacState.O)) {
+			aWinCombos[n][1].computeMe();
+			computerPlayed = true;
+			break;
+		} else if ((aWinCombos[n][0].getType() == TicTacState.NONE) && (aWinCombos[n][1].getType() == TicTacState.O) && (aWinCombos[n][2].getType() == TicTacState.O)) {
+			aWinCombos[n][0].computeMe();
+			computerPlayed = true;
+			break;
+		}
 	}
+
+	// PASS TWO
+	// is the player only one X away from winning? if so then block it!
+	if (computerPlayed == false) {
+		for (n=0; n<aWinCombos.length; n++) {
+			// check combinations for player about to win (two Xs and a NONE)
+			if ((aWinCombos[n][0].getType() == TicTacState.X) && (aWinCombos[n][1].getType() == TicTacState.X) && (aWinCombos[n][2].getType() == TicTacState.NONE)) {
+				// block the win
+				aWinCombos[n][2].computeMe();
+				computerPlayed = true;
+				break;
+			} else if ((aWinCombos[n][0].getType() == TicTacState.X) && (aWinCombos[n][1].getType() == TicTacState.NONE) && (aWinCombos[n][2].getType() == TicTacState.X)) {
+				aWinCombos[n][1].computeMe();
+				computerPlayed = true;
+				break;
+			} else if ((aWinCombos[n][0].getType() == TicTacState.NONE) && (aWinCombos[n][1].getType() == TicTacState.X) && (aWinCombos[n][2].getType() == TicTacState.X)) {
+				aWinCombos[n][0].computeMe();
+				computerPlayed = true;
+				break;
+			}
+		}
+	}
+
+	// PASS THREE
+	if (computerPlayed == false) {
+		// otherwise randomly select a ticTac
+		var randomIndex;
+		// randomly select a ticTac object to take
+		while (true) {
+			randomIndex = randomMe(0,8);
+
+            console.log("Test: " + me["ticTac" + randomIndex]);
+            console.log(me["ticTac" + randomIndex].getType() + " == " + TicTacState.NONE)
+
+
+            // is this spot free? If so use it!
+			if (me["ticTac" + randomIndex].getType() == TicTacState.NONE) {
+				me["ticTac" + randomIndex].computeMe();
+				break;
+			}
+		}
+	}
+
 }
 
-// game loop method
-function onTick() {
+function onTurnFinished(e) {
+    console.log("turn finished");
 
-    console.log("tick!");
+	// increment turn counter
+	turnCount++;
+	// do we have a winner now?
+	checkWin();
+}
 
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TESTING
-	//document.getElementById("fps").innerHTML = createjs.Ticker.getMeasuredFPS();
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    /*
-	// STEP I : KEYBOARD MONITORING
-	if (upKey) redPlane.rotateUp();
-	else if (downKey) redPlane.rotateDown();
-
-	// STEP II : UPDATING STEP
-	// scroll through all used objects in game and update them all
-	var length = usedList.length;
-	var target;
-	for (var n=0; n<length; n++) {
-		target = usedList[n];
-		if (target !== null) target.updateMe();
-	}
-    */
-
-	// STEP III : RENDERING
-	// update the stage!
-	//stage.update();
+function onReset(e) {
+	resetMe();
+	// remove play again button
+	stage.removeChild(btnPlayAgain);
 }

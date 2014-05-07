@@ -13,7 +13,7 @@ var AssetManager = function() {
     */
     var gameManifest = [{src:"lib/TicTac.png", id:"TicTac", data:{
                     width:55, height:55, regPoint:"TopLeft",
-                    animations:{nonePlaced:[0,0],nonePlacedOver:[1,1],xPlaced:[1,1],xPlacedOver:[2,2],yPlaced:[3,3],yPlacedOver:[4,4]}
+                    animations:{}
                     }},
                         {src:"lib/Title.png", id:"Title", data:{
                     width:229, height:50, regPoint:"TopLeft",
