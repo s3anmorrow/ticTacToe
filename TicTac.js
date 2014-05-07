@@ -41,18 +41,12 @@ var TicTac = function() {
     }
 
     function onOver(e) {
-
-        console.log("onOver " + type);
-
         clip.gotoAndStop(type + 1);
         stage.update();
     }
 
 
     function onOut(e) {
-
-        console.log("onOut");
-
         clip.gotoAndStop(type);
         stage.update();
     }
@@ -74,9 +68,6 @@ var TicTac = function() {
     };
 
     this.computeMe = function() {
-
-        console.log("compute me!");
-
         type = TicTacState.O;
         // adjust frame
         clip.gotoAndStop(type);
@@ -101,7 +92,7 @@ var TicTac = function() {
 
     this.resetMe = function() {
         // resetting the TicTac object back to initial state
-        type = TicTac.NONE;
+        type = TicTacState.NONE;
         clip.gotoAndStop(type);
         this.enableMe();
     };

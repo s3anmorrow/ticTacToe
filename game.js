@@ -1,7 +1,7 @@
 // IDEAS FOR LESSONS FOR COURSE
 // variable scope - different in event handlers and this.method() of classes - bind() method solution or varaible solution
 // custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
-
+// build a button behaviour class
 
 
 
@@ -46,11 +46,13 @@ function resetMe() {
 	turnCount = 0;
 
 	// setup event listeners
-	document.addEventListener("playerFinished", onPlayerFinished.bind(this), true);
+	document.addEventListener("playerFinished", onPlayerFinished, true);
 	document.addEventListener("computerFinished", onComputerFinished, true);
 	document.addEventListener("turnFinished", onTurnFinished, true);
 
     stage.update();
+
+    console.log(">> game ready");
 }
 
 function checkWin() {
@@ -58,11 +60,11 @@ function checkWin() {
 	for (var n=0; n<aWinCombos.length; n++) {
 		if ((aWinCombos[n][0].getType() == TicTacState.X) && (aWinCombos[n][1].getType() == TicTacState.X) && (aWinCombos[n][2].getType() == TicTacState.X)) {
 			winner = TicTacState.X;
-			winningLines.gotoAndStop(n + 2);
+			winningLines.gotoAndStop(n);
 			break;
 		} else if ((aWinCombos[n][0].getType() == TicTacState.O) && (aWinCombos[n][1].getType() == TicTacState.O) && (aWinCombos[n][2].getType() == TicTacState.O)) {
 			winner = TicTacState.O;
-			winningLines.gotoAndStop(n + 2);
+			winningLines.gotoAndStop(n);
 			break;
 		}
 	}
@@ -75,9 +77,8 @@ function checkWin() {
 		// add play again button
 		stage.addChild(btnPlayAgain);
 	}
+    stage.update();
 }
-
-
 
 function randomMe(low, high) {
     // returns a random number
@@ -118,14 +119,6 @@ function onSetup() {
 	console.log(">> setup");
 	// kill event listener
 	document.removeEventListener("onAssetsLoaded", onSetup);
-
-    /*
-    // CLIP TESTING WITH ASSET MANAGER
-    var clip = assetManager.getClip("TicTac");
-    clip.gotoAndStop("xPlaced");
-    stage.addChild(clip);
-    stage.update();
-    */
 
     // initialization
     title = assetManager.getClip("Title");
@@ -169,6 +162,8 @@ function onSetup() {
 
     // initialization
     btnPlayAgain = assetManager.getClip("BtnPlayAgain");
+    btnPlayAgain.x = 65;
+    btnPlayAgain.y = 272;
     btnPlayAgain.addEventListener("click", onReset);
 
     // construct an array referencing all ticTac objects in winning combinations
@@ -240,11 +235,6 @@ function onPlayerFinished(e) {
 		// randomly select a ticTac object to take
 		while (true) {
 			randomIndex = randomMe(0,8);
-
-            console.log("Test: " + me["ticTac" + randomIndex]);
-            console.log(me["ticTac" + randomIndex].getType() + " == " + TicTacState.NONE)
-
-
             // is this spot free? If so use it!
 			if (me["ticTac" + randomIndex].getType() == TicTacState.NONE) {
 				me["ticTac" + randomIndex].computeMe();
@@ -265,7 +255,12 @@ function onTurnFinished(e) {
 }
 
 function onReset(e) {
-	resetMe();
-	// remove play again button
+
+    console.log("resetting!");
+
+    // remove play again button
 	stage.removeChild(btnPlayAgain);
+
+	resetMe();
+
 }

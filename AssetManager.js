@@ -20,7 +20,7 @@ var AssetManager = function() {
                     animations:{main:[0,0]}
                     }},
                         {src:"lib/BtnPlayAgain.png", id:"BtnPlayAgain", data:{
-                    width:148, height:17, regPoint:"TopLeft",
+                    width:150, height:23, regPoint:"TopLeft",
                     animations:{up:[0,0],over:[0,0]}
                     }},
                         {src:"lib/WinningLines.png", id:"WinningLines", data:{
