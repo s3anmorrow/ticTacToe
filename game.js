@@ -1,61 +1,52 @@
-// Tic Tac Toe
+// Tic Tac Toe implemented in HTML5
 // Sean Morrow
 // May 2014
 
 // game variables
 var stage = null;
 var canvas = null;
+var turnCount = 0;
+var aWinCombos = null;
+var winner = 0;
 
 // game objects
-var gameOverScreen, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
+var btnPlayAgain, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
 // object to preload and handle all assets (spritesheet and sounds)
 var assetManager;
 
-// state of the game
-var state;
-
 var GameConstants = {
-	"FRAME_RATE":30,
-	"STARTING_LIVES":5,
-	"SURVIVORS_PER_PRISON":3,
-	"SURVIVORS_REQ_FOR_BOMB":8,
-	"KILLS_FOR_BALLOON":10,
-	"RED_START_PRODUCTION_FREQ":15,
-	"RED_PRODUCTION_PER_WORKER":1.5,
-	"STATE_SETUP":-1,
-	"STATE_INTRO":0,
-	"STATE_INSTRUCT":1,
-	"STATE_CREDITS":2,
-	"STATE_PLAYING":3,
-	"STATE_GAMEOVER":4
+	"FRAME_RATE":30
 };
 
 
 // ------------------------------------------------------------ private methods
-function startGame() {
-	// initialization
 
-	// change stage of game
-	state = GameConstants.STATE_PLAYING;
+function resetMe() {
+	/*
+    // resetting all ticTac objects
+	for (var n:int=0; n<9; n++) {
+		this["ticTac" + n].resetMe();
+	}
+    */
+
+	// reset winning lines
+	winningLines.gotoAndStop(0);
+	// game variable resets
+	winner = 0;
+	turnCount = 0;
+
+	// setup event listeners
+	//this.addEventListener(TicTac.PLAYER_FINISHED, onPlayerFinished, true);
+	//this.addEventListener(TicTac.COMPUTER_FINISHED, onComputerFinished, true);
+	//this.addEventListener(TicTac.TURN_FINISHED, onTurnFinished, true);
+
+    stage.update();
 }
 
-function stopGame(win) {
 
-
-	state = GameConstants.STATE_GAMEOVER;
-}
-
-function resetGame() {
-
-
-	state = GameConstants.STATE_INTRO;
-}
-
-function randomMe(iLower,iUpper) {
-	// randomly selects returns a number between range
-	var iRandomNum = 0;
-	iRandomNum = Math.round(Math.random() * (iUpper - iLower)) + iLower;
-	return iRandomNum;
+function randomMe(low, high) {
+    // returns a random number
+	return Math.floor(Math.random() * (1 + high - low)) + low;
 }
 
 // ------------------------------------------------------------ event handlers
@@ -77,6 +68,9 @@ function onInit() {
 	background.cache(0,0,280,300);
 	stage.addChild(background);
 	stage.update();
+
+    // enable mouseover events for the stage - disabled by default since they can be expensive
+    stage.enableMouseOver();
 
 	// setup listener for when assetManager has loaded the gameScreen assets
 	//document.addEventListener("onScreensLoaded", onPreloadAssets);
@@ -126,12 +120,10 @@ function onSetup() {
     */
 
     // initialization
-    /*
-    title = new Title();
-    title.x = -17;
+    title = assetManager.getClip("Title");
+    title.x = 22;
     title.y = 16;
-    this.addChild(title);
-    */
+    stage.addChild(title);
 
     ticTac0 = new TicTac();
     ticTac0.positionMe(50,86);
@@ -160,34 +152,27 @@ function onSetup() {
     ticTac8 = new TicTac();
     ticTac8.positionMe(174,212);
 
-    stage.update();
-
-    /*
-    winningLines = new WinningLines();
+    winningLines = assetManager.getClip("WinningLines");
     winningLines.x = 50;
     winningLines.y = 86;
-    this.addChild(winningLines);
+    // set it to be blank (no winning lines)
+    winningLines.gotoAndStop(8);
+    stage.addChild(winningLines);
 
     // initialization
-    gameOverScreen = new GameOverScreen();
-    gameOverScreen.btnPlayAgain.addEventListener(MouseEvent.CLICK, onReset);
+    btnPlayAgain = assetManager.getClip("BtnPlayAgain");
+    //btnPlayAgain.addEventListener(MouseEvent.CLICK, onReset);
 
     // construct an array referencing all ticTac objects in winning combinations
     aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],
                            [ticTac0,ticTac3,ticTac6],[ticTac1,ticTac4,ticTac7],[ticTac2,ticTac5,ticTac8],
                            [ticTac0,ticTac4,ticTac8],[ticTac2,ticTac4,ticTac6]);
-    */
 
+    resetMe();
 
-
-    /*
-	// game ready - show intro gameScreen
-	gameScreen.showMe("Intro");
-
-	// change state of game
-	state = GameConstants.STATE_INTRO;
-	console.log(">> intro gameScreen ready");
-    */
+    // update the stage
+    stage.update();
+    console.log(">> intro gameScreen ready");
 }
 
 function onGameEvent(e) {

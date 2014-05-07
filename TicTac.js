@@ -1,4 +1,4 @@
-﻿var TicTac = function() {
+var TicTac = function() {
      // private game variables
      var stage = window.stage;
      var assetManager = window.assetManager;
@@ -6,8 +6,11 @@
      // public properties - masquerading as static variables
      // ticTac state contants
      this.NONE = 0;
-     this.X = 1;
-     this.O = 2;
+     this.NONE_OVER = 1;
+     this.X = 2;
+     this.X_OVER = 3;
+     this.O = 4;
+     this.O_OVER = 5;
 
      // initialization
      var type = this.NONE;
@@ -31,58 +34,83 @@
      stage.addChild(clip);
 
      // ???????????????????????
-     //this.addEventListener(MouseEvent.CLICK, onClick);
+     clip.addEventListener("click", onClick);
+     clip.addEventListener("mouseover", onOver);
+     clip.addEventListener("mouseout", onOut);
+
+     // ???????????????????????
+     var me = this;
 
 
      // ------------------------------------------------ get/set methods
      this.getType = function() {
          return type;
+     };
+
+     // ------------------------------------------------ event handler
+     function onClick(e) {
+
+         // player selecting ticTac
+         me.playMe();
+
+         e.preventDefault();
+     }
+
+     function onOver(e) {
+         clip.gotoAndStop(type + 1);
+         stage.update();
+     }
+
+
+     function onOut(e) {
+         clip.gotoAndStop(type);
+         stage.update();
      }
 
      // ------------------------------------------------ public methods
      this.positionMe = function(x,y) {
          clip.x = x;
          clip.y = y;
-     }
+     };
 
      this.playMe = function() {
          type = this.X;
          // adjust frame
          clip.gotoAndStop(type);
-         disableMe();
+         this.disableMe();
          document.dispatchEvent(eventTurnFinished);
          document.dispatchEvent(eventPlayerFinished);
-     }
+     };
 
      this.computeMe = function() {
          type = this.O;
          // adjust frame
          clip.gotoAndStop(type);
-         disableMe();
+         this.disableMe();
          document.dispatchEvent(eventTurnFinished);
          document.dispatchEvent(eventComputerFinished);
-     }
+     };
 
      this.disableMe = function() {
          // ???????????????????????
          // disables the TicTac object
          //btnRollover.enabled = false;
          //btnRollover.mouseEnabled = false;
-         //this.removeEventListener(MouseEvent.CLICK, onClick);
-     }
+         clip.removeEventListener("click", onClick);
+     };
 
-     this.disableMe = function() {
+     this.enableMe = function() {
          // ???????????????????????
          // disables the TicTac object
          //btnRollover.enabled = true;
          //btnRollover.mouseEnabled = true;
-         //this.addEventListener(MouseEvent.CLICK, onClick);
-     }
+         clip.addEventListener("click", onClick);
+     };
 
      this.resetMe = function() {
          // resetting the TicTac object back to initial state
          type = this.NONE;
          clip.gotoAndStop(type);
          enableMe();
-     }
- }
+     };
+ };

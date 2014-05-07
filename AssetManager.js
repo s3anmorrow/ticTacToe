@@ -8,13 +8,24 @@ var AssetManager = function() {
     var screenManifest = {src:"lib/Screens.png", id:"Screens", data:{
 							width:450, height:450, regPoint:"topLeft",
 							animations:{Preload:[0,0],Intro:[1,1],LoseGame:[2,2],WinGame:[3,3],
-								        Instruct1:[4,4],Instruct2:[5,5],Instruct3:[6,6],Credits:[7,7]}
+				Instruct1:[4,4],Instruct2:[5,5],Instruct3:[6,6],Credits:[7,7]}
                         }}
     */
     var gameManifest = [{src:"lib/TicTac.png", id:"TicTac", data:{
                     width:55, height:55, regPoint:"TopLeft",
-                    animations:{nonePlaced:[0,0],xPlaced:[1,1],
-                                yPlaced:[2,2]}
+                    animations:{nonePlaced:[0,0],nonePlacedOver:[1,1],xPlaced:[1,1],xPlacedOver:[2,2],yPlaced:[3,3],yPlacedOver:[4,4]}
+                    }},
+                        {src:"lib/Title.png", id:"Title", data:{
+                    width:229, height:50, regPoint:"TopLeft",
+                    animations:{main:[0,0]}
+                    }},
+                        {src:"lib/BtnPlayAgain.png", id:"BtnPlayAgain", data:{
+                    width:148, height:17, regPoint:"TopLeft",
+                    animations:{up:[0,0],over:[0,0]}
+                    }},
+                        {src:"lib/WinningLines.png", id:"WinningLines", data:{
+                    width:177, height:183, regPoint:"TopLeft",
+                    animations:{}
                     }}
                 ];
 
@@ -48,7 +59,7 @@ var AssetManager = function() {
 				var y = 0;
 				if (data.regPoint == "center"){
 					x = Math.floor(data.width/2);
-					y = Math.floor(data.height/2)
+					y = Math.floor(data.height/2);
 				}
 				// construct Spritesheet object from source
 				spriteSheet = new createjs.SpriteSheet({
@@ -71,20 +82,20 @@ var AssetManager = function() {
         counter++;
         // an asset has been loaded
         document.dispatchEvent(eventAssetLoaded);
-        console.log("asset loaded: " + e.result.src)
-	}
+        console.log("asset loaded: " + e.result.src);
+	};
 
 	//called if there is an error loading the spriteSheet (usually due to a 404)
 	onError = function(e) {
 		console.log("Preloader > Error Loading asset");
-	}
+	};
 
 	onComplete = function(e) {
 		if (counter >= total) {
 			// dispatch event that all assets are loaded
 			document.dispatchEvent(eventAllLoaded);
         }
-	}
+	};
 
 	// ------------------------------------------------------ public methods
 	this.getClip = function(id) {
@@ -95,11 +106,11 @@ var AssetManager = function() {
 		sprite.y = 0;
 		sprite.currentFrame = 0;
 		return sprite;
-	}
+	};
 
 	this.getProgress = function() {
 		return (counter/total);
-	}
+	};
 
     /*
 	this.loadScreens = function() {
@@ -130,5 +141,5 @@ var AssetManager = function() {
 		preloader.setMaxConnections(5);
 		// load first spritesheet to start preloading process
 		preloader.loadManifest(manifest);
-	}
+	};
 };
