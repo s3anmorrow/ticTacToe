@@ -33,14 +33,13 @@ var TicTac = function() {
      clip.gotoAndStop(type);
      stage.addChild(clip);
 
-     // ???????????????????????
+     // setup event listeners
      clip.addEventListener("click", onClick);
      clip.addEventListener("mouseover", onOver);
      clip.addEventListener("mouseout", onOut);
 
-     // ???????????????????????
+     // variable pointing to this closure to combat scope issues with private methods
      var me = this;
-
 
      // ------------------------------------------------ get/set methods
      this.getType = function() {
@@ -49,10 +48,9 @@ var TicTac = function() {
 
      // ------------------------------------------------ event handler
      function onClick(e) {
-
          // player selecting ticTac
          me.playMe();
-
+         // stop click from propogating further
          e.preventDefault();
      }
 
@@ -80,6 +78,7 @@ var TicTac = function() {
          this.disableMe();
          document.dispatchEvent(eventTurnFinished);
          document.dispatchEvent(eventPlayerFinished);
+         stage.update();
      };
 
      this.computeMe = function() {
@@ -92,18 +91,16 @@ var TicTac = function() {
      };
 
      this.disableMe = function() {
-         // ???????????????????????
          // disables the TicTac object
-         //btnRollover.enabled = false;
-         //btnRollover.mouseEnabled = false;
+         clip.removeEventListener("mouseover", onOver);
+         clip.removeEventListener("mouseout", onOut);
          clip.removeEventListener("click", onClick);
      };
 
      this.enableMe = function() {
-         // ???????????????????????
          // disables the TicTac object
-         //btnRollover.enabled = true;
-         //btnRollover.mouseEnabled = true;
+         clip.addEventListener("mouseover", onOver);
+         clip.addEventListener("mouseout", onOut);
          clip.addEventListener("click", onClick);
      };
 

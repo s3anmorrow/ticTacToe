@@ -30,7 +30,7 @@ function resetMe() {
     */
 
 	// reset winning lines
-	winningLines.gotoAndStop(0);
+	winningLines.gotoAndStop(8);
 	// game variable resets
 	winner = 0;
 	turnCount = 0;
