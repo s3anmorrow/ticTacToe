@@ -1,8 +1,13 @@
 // IDEAS FOR LESSONS FOR COURSE
-// variable scope - different in event handlers and this.method() of classes - bind() method solution or varaible solution
+// variable scope - different in event handlers - best solution is the var me = this - avoid bind() http://www.smashingmagazine.com/2009/08/01/what-you-need-to-know-about-javascript-scope/
 // custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
 // build a button behaviour class
+// build an AssetManager with students
 
+
+// TODO add button behaviour class to TicTac and BtnPlayAgain
+// TODO better approach to class constants?
+// TODO look into on instead of addEventListener
 
 
 // Tic Tac Toe implemented in HTML5
@@ -16,10 +21,8 @@ var turnCount = 0;
 var aWinCombos = null;
 var winner = 0;
 
-
-// ????????????????
+// variable pointing to "this" closure to be used in all methods below in place of "this" - to combat any scope issues inside event handers
 var me = this;
-
 
 // game objects
 var btnPlayAgain, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
@@ -30,13 +33,11 @@ var GameConstants = {
 	"FRAME_RATE":30
 };
 
-
 // ------------------------------------------------------------ private methods
-
 function resetMe() {
     // resetting all ticTac objects
 	for (var n=0; n<9; n++) {
-		this["ticTac" + n].resetMe();
+		me["ticTac" + n].resetMe();
 	}
 
 	// reset winning lines
@@ -51,7 +52,6 @@ function resetMe() {
 	document.addEventListener("turnFinished", onTurnFinished, true);
 
     stage.update();
-
     console.log(">> game ready");
 }
 
@@ -164,7 +164,11 @@ function onSetup() {
     btnPlayAgain = assetManager.getClip("BtnPlayAgain");
     btnPlayAgain.x = 65;
     btnPlayAgain.y = 272;
-    btnPlayAgain.addEventListener("click", onReset);
+    //btnPlayAgain.addEventListener("click", onReset);
+
+    var btnTest = new Button(btnPlayAgain,stage);
+
+
 
     // construct an array referencing all ticTac objects in winning combinations
     aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],
@@ -242,7 +246,6 @@ function onPlayerFinished(e) {
 			}
 		}
 	}
-
 }
 
 function onTurnFinished(e) {
@@ -255,12 +258,8 @@ function onTurnFinished(e) {
 }
 
 function onReset(e) {
-
-    console.log("resetting!");
-
     // remove play again button
 	stage.removeChild(btnPlayAgain);
-
+    // reset the game
 	resetMe();
-
 }

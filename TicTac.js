@@ -17,9 +17,8 @@ var TicTac = function() {
     clip.gotoAndStop(type);
     stage.addChild(clip);
 
-    // variable pointing to this closure to combat scope issues with event handlers
+    // variable pointing to "this" closure to be used in all methods below in place of "this" - to combat any scope issues
     var me = this;
-    //var onClick2 = onClick.bind(this);
 
     // setup event listeners
     // note we are binding the TicTac function itself to be the this of the event handler
@@ -61,7 +60,10 @@ var TicTac = function() {
         type = TicTacState.X;
         // adjust frame
         clip.gotoAndStop(type);
-        this.disableMe();
+        me.disableMe();
+
+        // you are almost forced to always dispatch from document since in canvas games there really are only the stage element and the document
+        // it must be dispatched on an object of the DOM to go through the capture, target, bubble phase
         document.dispatchEvent(eventTurnFinished);
         document.dispatchEvent(eventPlayerFinished);
         stage.update();
@@ -71,7 +73,7 @@ var TicTac = function() {
         type = TicTacState.O;
         // adjust frame
         clip.gotoAndStop(type);
-        this.disableMe();
+        me.disableMe();
         document.dispatchEvent(eventTurnFinished);
         document.dispatchEvent(eventComputerFinished);
     };
@@ -94,7 +96,7 @@ var TicTac = function() {
         // resetting the TicTac object back to initial state
         type = TicTacState.NONE;
         clip.gotoAndStop(type);
-        this.enableMe();
+        me.enableMe();
     };
  };
 

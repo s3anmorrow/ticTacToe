@@ -1,17 +1,10 @@
 // AssetManager class
 // Sean Morrow
-// Mar 22 / 2013
+// May 6 / 2014
 
 var AssetManager = function() {
 	// manifest of asset information
-	/*
-    var screenManifest = {src:"lib/Screens.png", id:"Screens", data:{
-							width:450, height:450, regPoint:"topLeft",
-							animations:{Preload:[0,0],Intro:[1,1],LoseGame:[2,2],WinGame:[3,3],
-				Instruct1:[4,4],Instruct2:[5,5],Instruct3:[6,6],Credits:[7,7]}
-                        }}
-    */
-    var gameManifest = [{src:"lib/TicTac.png", id:"TicTac", data:{
+    var manifest = [{src:"lib/TicTac.png", id:"TicTac", data:{
                     width:55, height:55, regPoint:"TopLeft",
                     animations:{}
                     }},
@@ -39,12 +32,8 @@ var AssetManager = function() {
 	// preloader object
 	preloader = new createjs.LoadQueue();
 	// construct custom event object and initialize it
-	//var eventScreensLoaded = document.createEvent("Event");
-	//eventScreensLoaded.initEvent("onScreensLoaded", true, true);
-	var eventAssetLoaded = document.createEvent("Event");
-	eventAssetLoaded.initEvent("onAssetLoaded", true, true);
-	var eventAllLoaded = document.createEvent("Event");
-	eventAllLoaded.initEvent("onAssetsLoaded", true, true);
+	var eventAssetLoaded = new Event("onAssetLoaded");
+	var eventAllLoaded = new Event("onAssetsLoaded");
 
 	// ------------------------------------------------------ event handlers
 	onLoaded = function(e) {
@@ -112,25 +101,8 @@ var AssetManager = function() {
 		return (counter/total);
 	};
 
-    /*
-	this.loadScreens = function() {
-		// setup manifest
-		manifest = screenManifest;
-		counter = 0;
-		total = 1;
-		// setup event listeners
-		preloader.onFileLoad = onLoaded;
-		preloader.onError = onError;
-		preloader.onComplete = onComplete;
-		preloader.eventObject = eventScreensLoaded;
-		// make it happen
-		preloader.loadFile(manifest);
-	}
-    */
-
 	this.loadAssets = function() {
 		// setup manifest
-		manifest = gameManifest;
 		counter = 0;
 		total = manifest.length;
 		// registers the PreloadJS object with SoundJS - will automatically have access to all sound assets
