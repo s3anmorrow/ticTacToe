@@ -1,15 +1,11 @@
 // IDEAS FOR LESSONS FOR COURSE
-// variable scope - different in event handlers - best solution is the var me = this - avoid bind() http://www.smashingmagazine.com/2009/08/01/what-you-need-to-know-about-javascript-scope/
+// variable scope - different in event handlers - best solution is the var me = using on() instead of addEventListener() (limitations are you can attach multiples of same event type and you need to keep track of listener reference in a variable)
 // custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
 // build a button behaviour class
 // build an AssetManager with students
 // inheritance of objects in javascript - particularly inheriting and extending createJS objects http://www.ajohnstone.com/test/hackday/CreateJS-EaselJS-b262a85/tutorials/Inheritance/ (might not be the best way in this URL)
 
-
-// TODO add button behaviour class to TicTac and BtnPlayAgain
 // TODO better approach to class constants?
-// TODO look into on instead of addEventListener
-
 
 // Tic Tac Toe implemented in HTML5
 // Sean Morrow
@@ -38,7 +34,7 @@ var GameConstants = {
 function resetMe() {
     // resetting all ticTac objects
 	for (var n=0; n<9; n++) {
-		me["ticTac" + n].resetMe();
+		this["ticTac" + n].resetMe();
 	}
 
 	// reset winning lines
@@ -47,7 +43,7 @@ function resetMe() {
 	winner = 0;
 	turnCount = 0;
 
-	// setup event listeners
+	// setup event listeners - cannot use on() here since document is NOT a sprite object of createJS
 	document.addEventListener("playerFinished", onPlayerFinished, true);
 	document.addEventListener("computerFinished", onComputerFinished, true);
 	document.addEventListener("turnFinished", onTurnFinished, true);

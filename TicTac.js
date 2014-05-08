@@ -17,14 +17,10 @@ var TicTac = function() {
     clip.gotoAndStop(type);
     stage.addChild(clip);
 
-    // variable pointing to "this" closure to be used in all methods below in place of "this" - to combat any scope issues
-    var me = this;
-
-    // setup event listeners
-    // note we are binding the TicTac function itself to be the this of the event handler
-    clip.addEventListener("click", onClick);
-    clip.addEventListener("mouseover", onOver);
-    clip.addEventListener("mouseout", onOut);
+    // setup event listeners using on() (instead of addEventListener - gives more power and can select scope that event handler runs in!)
+    var clickListener = clip.on("click", onClick, this);
+    var overListener = clip.on("mouseover", onOver, this);
+    var outListener = clip.on("mouseout", onOut, this);
 
     // ------------------------------------------------ get/set methods
     this.getType = function() {
@@ -34,7 +30,7 @@ var TicTac = function() {
     // ------------------------------------------------ event handler
     function onClick(e) {
         // player selecting ticTac
-        me.playMe();
+        this.playMe();
         // stop click from propogating further
         e.preventDefault();
     }
@@ -43,7 +39,6 @@ var TicTac = function() {
         clip.gotoAndStop(type + 1);
         stage.update();
     }
-
 
     function onOut(e) {
         clip.gotoAndStop(type);
@@ -60,7 +55,7 @@ var TicTac = function() {
         type = TicTacState.X;
         // adjust frame
         clip.gotoAndStop(type);
-        me.disableMe();
+        this.disableMe();
 
         // you are almost forced to always dispatch from document since in canvas games there really are only the stage element and the document
         // it must be dispatched on an object of the DOM to go through the capture, target, bubble phase
@@ -73,30 +68,33 @@ var TicTac = function() {
         type = TicTacState.O;
         // adjust frame
         clip.gotoAndStop(type);
-        me.disableMe();
+        this.disableMe();
         document.dispatchEvent(eventTurnFinished);
         document.dispatchEvent(eventComputerFinished);
     };
 
     this.disableMe = function() {
         // disables the TicTac object
-        clip.removeEventListener("mouseover", onOver);
-        clip.removeEventListener("mouseout", onOut);
-        clip.removeEventListener("click", onClick);
+        clip.off("click", clickListener);
+        clip.off("mouseover", overListener);
+        clip.off("mouseout", outListener);
     };
 
     this.enableMe = function() {
-        // disables the TicTac object
-        clip.addEventListener("mouseover", onOver);
-        clip.addEventListener("mouseout", onOut);
-        clip.addEventListener("click", onClick);
+        // only enable if required - with on you can have mulitple events of same name attached to the same target
+        if (!clip.hasEventListener("click")) {
+            // enables the TicTac object
+            clickListener = clip.on("click", onClick, this);
+            overListener = clip.on("mouseover", onOver, this);
+            outListener = clip.on("mouseout", onOut, this);
+        }
     };
 
     this.resetMe = function() {
         // resetting the TicTac object back to initial state
         type = TicTacState.NONE;
         clip.gotoAndStop(type);
-        me.enableMe();
+        this.enableMe();
     };
  };
 
