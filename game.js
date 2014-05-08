@@ -166,7 +166,9 @@ function onSetup() {
     btnPlayAgain.y = 272;
     //btnPlayAgain.addEventListener("click", onReset);
 
-    var btnTest = new Button(btnPlayAgain,stage);
+    //var btnTest = new Button(btnPlayAgain,stage);
+    var btnTest = new Button("blah");
+    stage.addChild(btnTest);
 
 
 

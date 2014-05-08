@@ -1,3 +1,48 @@
+// ATTEMPT II
+(function() {
+    var Button = function(label) {
+      this.initialize(label);
+    }
+    var p = Button.prototype = new createjs.Container();
+
+    p.label;
+    p.background;
+    p.count = 0;
+
+    p.Container_initialize = p.initialize;
+    p.initialize = function(label) {
+        this.Container_initialize();
+        // add custom setup logic here.
+        this.label = label;
+
+        var color = "#CCC";
+        var text = new createjs.Text(label, "20px Arial", "#000");
+        text.textBaseline = "top";
+        text.textAlign = "center";
+
+        var width = text.getMeasuredWidth()+30;
+        var height = text.getMeasuredHeight()+20;
+
+        this.background = new createjs.Shape();
+        this.background.graphics.beginFill(color).drawRoundRect(0,0,width,height,10);
+
+        text.x = width/2;
+        text.y = 10;
+
+        this.addChild(this.background,text);
+    }
+
+    p.onClick = function() {
+        alert("You clicked on a button: "+this.label);
+    }
+
+    window.Button = Button;
+}());
+
+
+
+/*
+// ATTEMPT I
 var Button = function(clip, stage) {
     // passed in sprite must have at least two frames, but can support up to four
     // frame 1 : up state
@@ -89,3 +134,4 @@ var ButtonStates = {
     "DOWN":2,
     "DISABLED":3
 };
+*/
