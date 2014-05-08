@@ -3,6 +3,7 @@
 // custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
 // build a button behaviour class
 // build an AssetManager with students
+// inheritance of objects in javascript - particularly inheriting and extending createJS objects http://www.ajohnstone.com/test/hackday/CreateJS-EaselJS-b262a85/tutorials/Inheritance/ (might not be the best way in this URL)
 
 
 // TODO add button behaviour class to TicTac and BtnPlayAgain
@@ -164,11 +165,10 @@ function onSetup() {
     btnPlayAgain = assetManager.getClip("BtnPlayAgain");
     btnPlayAgain.x = 65;
     btnPlayAgain.y = 272;
-    //btnPlayAgain.addEventListener("click", onReset);
-
-    var btnTest = new Button(btnPlayAgain,stage);
-
-
+    btnPlayAgain.addEventListener("click", onReset);
+    // tack on behaviour as a property of the sprite itself
+    // this would be WAY cooler if the Sprite class was inherited into the ButtonBehavour (rename to Button) class
+    btnPlayAgain.behaviour = new ButtonBehaviour(btnPlayAgain,stage);
 
     // construct an array referencing all ticTac objects in winning combinations
     aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],

@@ -1,5 +1,6 @@
-var Button = function(clip, stage) {
-    // passed in sprite must have at least two frames, but can support up to four
+var ButtonBehaviour = function(clip, stage) {
+    // Adds button behaviour to any createJS sprite object
+    // Passed in sprite must have at least two frames, but can support up to four
     // frame 1 : up state
     // frame 2 : over state
     // frame 3 : down state
@@ -17,7 +18,6 @@ var Button = function(clip, stage) {
 
     // navigate to new frame in sprite
     clip.gotoAndStop(state);
-    stage.addChild(clip);
     stage.update();
 
     // setup event listeners
