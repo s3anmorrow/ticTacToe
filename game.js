@@ -70,7 +70,7 @@ function checkWin() {
 		}
 	}
 
-	if ((winner != 0) || (turnCount >= 9)) {
+	if ((winner !== 0) || (turnCount >= 9)) {
 		// game over
 		document.removeEventListener("playerFinished", onPlayerFinished, true);
         document.removeEventListener("computerFinished", onComputerFinished, true);
@@ -212,7 +212,7 @@ function onPlayerFinished(e) {
 
 	// PASS TWO
 	// is the player only one X away from winning? if so then block it!
-	if (computerPlayed == false) {
+	if (computerPlayed === false) {
 		for (n=0; n<aWinCombos.length; n++) {
 			// check combinations for player about to win (two Xs and a NONE)
 			if ((aWinCombos[n][0].getType() == TicTacState.X) && (aWinCombos[n][1].getType() == TicTacState.X) && (aWinCombos[n][2].getType() == TicTacState.NONE)) {
@@ -233,7 +233,7 @@ function onPlayerFinished(e) {
 	}
 
 	// PASS THREE
-	if (computerPlayed == false) {
+	if (computerPlayed === false) {
 		// otherwise randomly select a ticTac
 		var randomIndex;
 		// randomly select a ticTac object to take

@@ -23,7 +23,6 @@ var AssetManager = function() {
                 ];
 
 	// keep track of assets
-	var manifest;
 	var counter = -1;
 	var total = -1;
 	// array of spritesheet objects
