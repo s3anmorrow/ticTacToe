@@ -8,9 +8,9 @@ var TicTac = function() {
     var type = TicTacState.NONE;
 
     // construct custom event object for plane being killed
-    var eventTurnFinished = new Event("turnFinished");
-    var eventComputerFinished = new Event("computerFinished");
-    var eventPlayerFinished = new Event("playerFinished");
+    var eventTurnFinished = new createjs.Event("turnFinished", true);
+    var eventComputerFinished = new createjs.Event("computerFinished", true);
+    var eventPlayerFinished = new createjs.Event("playerFinished", true);
 
     // grab clip for TicTac and add to stage canvas
     var clip = assetManager.getClip("TicTac");
@@ -30,7 +30,7 @@ var TicTac = function() {
     // ------------------------------------------------ event handler
     function onClick(e) {
         // player selecting ticTac
-        this.playMe();
+        this.playMe(); // WITHOUT using on() this would need to be me.playMe() with var me = this; above
         // stop click from propogating further
         e.preventDefault();
     }
@@ -57,10 +57,10 @@ var TicTac = function() {
         clip.gotoAndStop(type);
         this.disableMe();
 
-        // you are almost forced to always dispatch from document since in canvas games there really are only the stage element and the document
-        // it must be dispatched on an object of the DOM to go through the capture, target, bubble phase
-        document.dispatchEvent(eventTurnFinished);
-        document.dispatchEvent(eventPlayerFinished);
+        // you need to dispatch your custom event from a displayObject that is on the stage
+        // the event travels up from the stage to the target (capture / target) (clip in this case) and back down again (bubble)
+        clip.dispatchEvent(eventTurnFinished);
+        clip.dispatchEvent(eventPlayerFinished);
         stage.update();
     };
 
@@ -69,8 +69,8 @@ var TicTac = function() {
         // adjust frame
         clip.gotoAndStop(type);
         this.disableMe();
-        document.dispatchEvent(eventTurnFinished);
-        document.dispatchEvent(eventComputerFinished);
+        clip.dispatchEvent(eventTurnFinished);
+        clip.dispatchEvent(eventComputerFinished);
     };
 
     this.disableMe = function() {

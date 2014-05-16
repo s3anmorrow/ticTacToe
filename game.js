@@ -1,12 +1,3 @@
-// IDEAS FOR LESSONS FOR COURSE
-// variable scope - different in event handlers - best solution is the var me = using on() instead of addEventListener() (limitations are you can attach multiples of same event type and you need to keep track of listener reference in a variable)
-// custom events using new Event() and new CustomEvent() for passing data along - https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
-// build a button behaviour class
-// build an AssetManager with students
-// inheritance of objects in javascript - particularly inheriting and extending createJS objects http://www.ajohnstone.com/test/hackday/CreateJS-EaselJS-b262a85/tutorials/Inheritance/ (might not be the best way in this URL)
-
-// TODO better approach to class constants?
-
 // Tic Tac Toe implemented in HTML5
 // Sean Morrow
 // May 2014
@@ -17,18 +8,31 @@ var canvas = null;
 var turnCount = 0;
 var aWinCombos = null;
 var winner = 0;
-
-// variable pointing to "this" closure to be used in all methods below in place of "this" - to combat any scope issues inside event handers
-var me = this;
+var gameOn = false;
 
 // game objects
 var btnPlayAgain, ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticTac8, winningLines, title;
 // object to preload and handle all assets (spritesheet and sounds)
 var assetManager;
 
-var GameConstants = {
-	"FRAME_RATE":30
-};
+// manifest of assets
+var manifest = [{src:"lib/TicTac.png", id:"TicTac", data:{
+                width:55, height:55, regPoint:"TopLeft",
+                animations:{}
+                }},
+                    {src:"lib/Title.png", id:"Title", data:{
+                width:229, height:50, regPoint:"TopLeft",
+                animations:{main:[0,0]}
+                }},
+                    {src:"lib/BtnPlayAgain.png", id:"BtnPlayAgain", data:{
+                width:150, height:23, regPoint:"TopLeft",
+                animations:{up:[0,0],over:[0,0]}
+                }},
+                    {src:"lib/WinningLines.png", id:"WinningLines", data:{
+                width:177, height:183, regPoint:"TopLeft",
+                animations:{}
+                }}
+            ];
 
 // ------------------------------------------------------------ private methods
 function resetMe() {
@@ -42,11 +46,7 @@ function resetMe() {
 	// game variable resets
 	winner = 0;
 	turnCount = 0;
-
-	// setup event listeners - cannot use on() here since document is NOT a sprite object of createJS
-	document.addEventListener("playerFinished", onPlayerFinished, true);
-	document.addEventListener("computerFinished", onComputerFinished, true);
-	document.addEventListener("turnFinished", onTurnFinished, true);
+    gameOn = true;
 
     stage.update();
     console.log(">> game ready");
@@ -67,10 +67,12 @@ function checkWin() {
 	}
 
 	if ((winner !== 0) || (turnCount >= 9)) {
-		// game over
-		document.removeEventListener("playerFinished", onPlayerFinished, true);
-        document.removeEventListener("computerFinished", onComputerFinished, true);
-        document.removeEventListener("turnFinished", onTurnFinished, true);
+        gameOn = false;
+        // disable all ticTacs
+        for (n=0; n<9; n++) {
+            this["ticTac" + n].disableMe();
+        }
+
 		// add play again button
 		stage.addChild(btnPlayAgain);
 	}
@@ -85,7 +87,6 @@ function randomMe(low, high) {
 // ------------------------------------------------------------ event handlers
 function onInit() {
 	console.log(">> initializing");
-	state = GameConstants.STATE_SETUP;
 
 	// get reference to canvas
 	canvas = document.getElementById("stage");
@@ -107,15 +108,15 @@ function onInit() {
 
 	// construct preloader object to load spritesheet and sound assets
 	assetManager = new AssetManager();
-    document.addEventListener("onAssetsLoaded", onSetup);
+    stage.addEventListener("onAssetsLoaded", onSetup);
     // load the assets
-	assetManager.loadAssets();
+	assetManager.loadAssets(manifest);
 }
 
 function onSetup() {
 	console.log(">> setup");
 	// kill event listener
-	document.removeEventListener("onAssetsLoaded", onSetup);
+	stage.removeEventListener("onAssetsLoaded", onSetup);
 
     // initialization
     title = assetManager.getClip("Title");
@@ -164,12 +165,19 @@ function onSetup() {
     btnPlayAgain.addEventListener("click", onReset);
     // tack on behaviour as a property of the sprite itself
     // this would be WAY cooler if the Sprite class was inherited into the ButtonBehavour (rename to Button) class
-    btnPlayAgain.behaviour = new ButtonBehaviour(btnPlayAgain,stage);
+    btnPlayAgain.behaviour = new SimpleButtonBehaviour(btnPlayAgain,stage);
 
     // construct an array referencing all ticTac objects in winning combinations
     aWinCombos = new Array([ticTac0,ticTac1,ticTac2],[ticTac3,ticTac4,ticTac5],[ticTac6,ticTac7,ticTac8],
                            [ticTac0,ticTac3,ticTac6],[ticTac1,ticTac4,ticTac7],[ticTac2,ticTac5,ticTac8],
                            [ticTac0,ticTac4,ticTac8],[ticTac2,ticTac4,ticTac6]);
+
+    // setup game listeners that will persist throughout the lifetime of the game
+    // first one needs the execution to run in the current scope (not event handler scope) so pass it in
+    // arguments : type, handler, scope, [once=false] (will remove itself after one run), data (any data object), [useCapture=false] (detect on capture phase)
+	stage.on("playerFinished", onPlayerFinished, this, false, true);
+	stage.on("computerFinished", onComputerFinished, true);
+	stage.on("turnFinished", onTurnFinished, true);
 
     // update the stage
     stage.update();
@@ -179,13 +187,15 @@ function onSetup() {
 
 function onComputerFinished(e) {
     console.log("computer finished");
+
+    if (!gameOn) return;
 }
 
 function onPlayerFinished(e) {
     console.log("player finished");
 
+    if (!gameOn) return;
 	var computerPlayed = false;
-
 	// PASS ONE
 	// is the computer only one O away from winning? if so then complete the win!
 	for (var n=0; n<aWinCombos.length; n++) {
@@ -236,8 +246,8 @@ function onPlayerFinished(e) {
 		while (true) {
 			randomIndex = randomMe(0,8);
             // is this spot free? If so use it!
-			if (me["ticTac" + randomIndex].getType() == TicTacState.NONE) {
-				me["ticTac" + randomIndex].computeMe();
+			if (this["ticTac" + randomIndex].getType() == TicTacState.NONE) {
+				this["ticTac" + randomIndex].computeMe();
 				break;
 			}
 		}
@@ -247,6 +257,7 @@ function onPlayerFinished(e) {
 function onTurnFinished(e) {
     console.log("turn finished");
 
+    if (!gameOn) return;
 	// increment turn counter
 	turnCount++;
 	// do we have a winner now?

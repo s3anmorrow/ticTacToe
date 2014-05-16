@@ -1,4 +1,4 @@
-var ButtonBehaviour = function(clip, stage) {
+var SimpleButtonBehaviour = function(clip, stage) {
     // Adds button behaviour to any createJS sprite object
     // Passed in sprite must have at least two frames, but can support up to four
     // frame 1 : up state
