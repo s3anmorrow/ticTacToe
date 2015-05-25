@@ -3,8 +3,8 @@
 // May 2014
 
 // the base width and height of game that graphics are designed for (pre-resizing for android screens)
-var BASE_HEIGHT = 300;
-var BASE_WIDTH = 280;
+var BASE_HEIGHT = 750;
+var BASE_WIDTH = 700;
 var scaleRatio = 1;
 // am I running on a mobile device?
 var mobile = false;
@@ -89,14 +89,14 @@ function onInit() {
 	// get reference to canvas
 	canvas = document.getElementById("stage");
 	// set canvas to as wide/high as the browser window
-	canvas.width = 280;
-	canvas.height = 300;
+	canvas.width = BASE_WIDTH;
+	canvas.height = BASE_HEIGHT;
 	// create stage object
 	stage = new createjs.Stage(canvas);
 
 	// color the background of the game with a shape
 	background = new createjs.Shape();
-	background.graphics.beginFill("#FFFFFF").drawRect(0,0,280,300);
+	background.graphics.beginFill("#FFFFFF").drawRect(0,0,BASE_WIDTH,BASE_HEIGHT);
 	stage.addChild(background);
 
     // is a touch screen supported?
@@ -123,44 +123,44 @@ function onSetup() {
     // initialization
     title = assetManager.getSprite("assets");
     title.gotoAndStop("title");
-    title.x = 22;
+    title.x = 50;
     title.y = 16;
     stage.addChild(title);
 
     ticTac0 = new TicTac(assetManager, stage, mobile);
-    ticTac0.positionMe(50,86);
+    ticTac0.positionMe(120,160);
 
     ticTac1 = new TicTac(assetManager, stage, mobile);
-    ticTac1.positionMe(112,86);
+    ticTac1.positionMe(278,160);
 
     ticTac2 = new TicTac(assetManager, stage, mobile);
-    ticTac2.positionMe(174,86);
+    ticTac2.positionMe(434,160);
 
     ticTac3 = new TicTac(assetManager, stage, mobile);
-    ticTac3.positionMe(50,150);
+    ticTac3.positionMe(120,318);
 
     ticTac4 = new TicTac(assetManager, stage, mobile);
-    ticTac4.positionMe(112,150);
+    ticTac4.positionMe(278,318);
 
     ticTac5 = new TicTac(assetManager, stage, mobile);
-    ticTac5.positionMe(174,150);
+    ticTac5.positionMe(434,318);
 
     ticTac6 = new TicTac(assetManager, stage, mobile);
-    ticTac6.positionMe(50,212);
+    ticTac6.positionMe(120,476);
 
     ticTac7 = new TicTac(assetManager, stage, mobile);
-    ticTac7.positionMe(112,212);
+    ticTac7.positionMe(278,476);
 
     ticTac8 = new TicTac(assetManager, stage, mobile);
-    ticTac8.positionMe(174,212);
+    ticTac8.positionMe(434,476);
 
     winLine = assetManager.getSprite("assets");
-    winLine.x = 50;
-    winLine.y = 86;
+    winLine.x = 125;
+    winLine.y = 160;
 
     btnPlayAgain = assetManager.getSprite("assets");
-    btnPlayAgain.x = 65;
-    btnPlayAgain.y = 272;
+    btnPlayAgain.x = 160;
+    btnPlayAgain.y = 660;
     btnPlayAgain.buttonBuilder = new ButtonBuilder(btnPlayAgain, ["btnPlayAgain_up", "btnPlayAgain_over", "btnPlayAgain_over"], stage);
     btnPlayAgain.buttonBuilder.setMobile(mobile);
     btnPlayAgain.addEventListener("click", onReset);
