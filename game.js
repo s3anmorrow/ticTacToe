@@ -2,6 +2,13 @@
 // Sean Morrow
 // May 2014
 
+// the base width and height of game that graphics are designed for (pre-resizing for android screens)
+var BASE_HEIGHT = 300;
+var BASE_WIDTH = 280;
+var scaleRatio = 1;
+// am I running on a mobile device?
+var mobile = false;
+
 // game variables
 var stage = null;
 var canvas = null;
@@ -17,6 +24,13 @@ var ticTac0, ticTac1, ticTac2, ticTac3, ticTac4, ticTac5, ticTac6, ticTac7, ticT
 var winLine;
 var title;
 var btnPlayAgain;
+
+// is this a mobile device and what type?
+var ua = navigator.userAgent.toLowerCase();
+if (ua.match(/(android)/)) {
+    mobile = true;
+    console.log(">> device info: " + ua);
+}
 
 // ------------------------------------------------------------ private methods
 function resetMe() {
@@ -97,6 +111,9 @@ function onInit() {
     stage.addEventListener("onAllAssetsLoaded", onSetup);
     // load the assets
 	assetManager.loadAssets(manifest);
+
+    // initial resize of app to adjust for device screen size
+    onResize();
 }
 
 function onSetup() {
@@ -159,8 +176,37 @@ function onSetup() {
     stage.addEventListener("computerFinished", onComputerFinished, true);
     stage.addEventListener("turnFinished", onTurnFinished, true);
 
+    // listener for browser resize (on desktop) to resize game
+    window.addEventListener("resize", onResize);
+
     // update the stage
     stage.update();
+}
+
+function onResize(e) {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+
+    var bestFit = false;
+    if (bestFit) {
+        // !!!!!!!!!!!!! probably drop this bestfit approach since it stretches things bad
+        // scale to exact fit
+        stage.scaleX = w / BASE_WIDTH;
+        stage.scaleY = h / BASE_HEIGHT;
+
+        // adjust canvas size
+        stage.canvas.width = BASE_WIDTH * stage.scaleX;
+        stage.canvas.height = BASE_HEIGHT * stage.scaleY;
+    } else {
+        // keep aspect ratio
+        scaleRatio = Math.min(w / BASE_WIDTH, h / BASE_HEIGHT);
+        stage.scaleX = scaleRatio;
+        stage.scaleY = scaleRatio;
+
+        // adjust canvas size
+        canvas.width = BASE_WIDTH * scaleRatio;
+        canvas.height = BASE_HEIGHT * scaleRatio;
+    }
 }
 
 function onComputerFinished(e) {
@@ -236,4 +282,11 @@ function onReset(e) {
     stage.removeChild(winLine);
     // reset the game
 	resetMe();
+}
+
+// ------------------------------------------------------ game entry point
+if (mobile) {
+    document.addEventListener("deviceready", onInit, false);
+} else {
+    window.addEventListener("load", onInit, false);
 }
