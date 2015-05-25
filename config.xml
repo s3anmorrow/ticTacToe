@@ -4,7 +4,7 @@
     <description>
 		The usual Tic Tac Toe game implemented as game build II for the course Game Programming I (Nova Scotia Community College)
     </description>
-    <author email="support@paddyjumpup.com" href="">
+    <author email="paddyjumpup@gmail.com" href="">
         PaddyJumpUp
     </author>
     <content src="index.html" />
