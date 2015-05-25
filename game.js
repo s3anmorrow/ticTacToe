@@ -207,6 +207,7 @@ function onResize(e) {
         canvas.width = BASE_WIDTH * scaleRatio;
         canvas.height = BASE_HEIGHT * scaleRatio;
     }
+    stage.update();
 }
 
 function onComputerFinished(e) {
