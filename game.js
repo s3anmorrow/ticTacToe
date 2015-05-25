@@ -285,8 +285,4 @@ function onReset(e) {
 }
 
 // ------------------------------------------------------ game entry point
-if (mobile) {
-    document.addEventListener("deviceready", onInit, false);
-} else {
-    window.addEventListener("load", onInit, false);
-}
+window.addEventListener("load", onInit, false);
