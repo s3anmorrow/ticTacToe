@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="ca.seanmorrow.tictactoe" version="1.0.0" versionCode="1" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>Tic Tac Toe</name>
+    <description>
+		The usual Tic Tac Toe game implemented as game build II for the course Game Programming I (Nova Scotia Community College)
+    </description>
+    <author email="support@paddyjumpup.com" href="">
+        PaddyJumpUp
+    </author>
+    <content src="index.html" />
+    <preference name="permissions" value="none" />
+    <preference name="orientation" value="portrait" />
+    <preference name="target-device" value="universal" />
+    <preference name="fullscreen" value="true" />
+    <preference name="webviewbounce" value="true" />
+    <preference name="prerendered-icon" value="true" />
+    <preference name="stay-in-webview" value="false" />
+    <preference name="ios-statusbarstyle" value="black-opaque" />
+    <preference name="detect-data-types" value="true" />
+    <preference name="exit-on-suspend" value="false" />
+    <preference name="show-splash-screen-spinner" value="false" />
+    <preference name="auto-hide-splash-screen" value="true" />
+    <preference name="disable-cursor" value="false" />
+    <preference name="android-minSdkVersion" value="19" />
+    <preference name="android-installLocation" value="auto" />
+	<preference name="SplashScreen" value="screen" />
+	<preference name="SplashScreenDelay" value="3000" />
+    <gap:plugin name="org.apache.cordova.battery-status" />
+    <gap:plugin name="org.apache.cordova.camera" />
+    <gap:plugin name="org.apache.cordova.media-capture" />
+    <gap:plugin name="org.apache.cordova.console" />
+    <gap:plugin name="org.apache.cordova.contacts" />
+    <gap:plugin name="org.apache.cordova.device" />
+    <gap:plugin name="org.apache.cordova.device-motion" />
+    <gap:plugin name="org.apache.cordova.device-orientation" />
+    <gap:plugin name="org.apache.cordova.dialogs" />
+    <gap:plugin name="org.apache.cordova.file" />
+    <gap:plugin name="org.apache.cordova.file-transfer" />
+    <gap:plugin name="org.apache.cordova.geolocation" />
+    <gap:plugin name="org.apache.cordova.globalization" />
+    <gap:plugin name="org.apache.cordova.inappbrowser" />
+    <gap:plugin name="org.apache.cordova.media" />
+    <gap:plugin name="org.apache.cordova.network-information" />
+    <gap:plugin name="org.apache.cordova.splashscreen" />
+    <gap:plugin name="org.apache.cordova.vibration" />
+
+	<icon gap:platform="android" gap:qualifier="ldpi" gap:density="ldpi" src="assets/icon/icon-36.png" />
+    <icon gap:platform="android" gap:qualifier="mdpi" gap:density="mdpi" src="assets/icon/icon-48.png" />
+    <icon gap:platform="android" gap:qualifier="hdpi" gap:density="hdpi" src="assets/icon/icon-72.png" />
+    <icon gap:platform="android" gap:qualifier="xhdpi" gap:density="xhdpi" src="assets/icon/icon-96.png" />
+	<icon gap:platform="android" gap:qualifier="xxhdpi" gap:density="xxhdpi" src="assets/icon/icon-144.png" />
+	<icon gap:platform="android" gap:qualifier="xxxhdpi" gap:density="xxxhdpi" src="assets/icon/icon-192.png" />
+
+	<splash gap:platform="android" gap:qualifier="ldpi" gap:density="ldpi" width="240" height="320" src="assets/splash/screen-ldpi.9.png" />
+    <splash gap:platform="android" gap:qualifier="mdpi" gap:density="mdpi" width="320" height="480" src="assets/splash/screen-mdpi.9.png" />
+    <splash gap:platform="android" gap:qualifier="hdpi" gap:density="hdpi"  width="480" height="800" src="assets/splash/screen-hdpi.9.png" />
+	<splash gap:platform="android" gap:qualifier="xhdpi" gap:density="xhdpi" width="640" height="960" src="assets/splash/screen-xhdpi.9.png" />
+	<splash gap:platform="android" gap:qualifier="xxhdpi" gap:density="xxhdpi" width="960" height="1440" src="assets/splash/screen-xxhdpi.9.png" />
+	<splash gap:platform="android" gap:qualifier="xxxhdpi" gap:density="xxxhdpi" width="1280" height="1920" src="assets/splash/screen-xxxhdpi.9.png" />
+
+    <access origin="*" />
+</widget>
