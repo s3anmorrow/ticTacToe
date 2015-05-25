@@ -113,7 +113,7 @@ function onInit() {
 	assetManager.loadAssets(manifest);
 
     // initial resize of app to adjust for device screen size
-    //onResize();
+    if (mobile) onResize();
 }
 
 function onSetup() {
@@ -177,7 +177,7 @@ function onSetup() {
     stage.addEventListener("turnFinished", onTurnFinished, true);
 
     // listener for browser resize (on desktop) to resize game
-    //window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize);
 
     // update the stage
     stage.update();
