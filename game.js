@@ -8,6 +8,8 @@ var BASE_WIDTH = 280;
 var scaleRatio = 1;
 // am I running on a mobile device?
 var mobile = false;
+// frame rate of game
+var frameRate = 5;
 
 // game variables
 var stage = null;
@@ -44,7 +46,6 @@ function resetMe() {
     turnCount = 0;
     gameOn = true;
 
-    stage.update();
     console.log(">> game ready");
 }
 
@@ -74,7 +75,6 @@ function checkWin() {
         // add play again button
         stage.addChild(btnPlayAgain);
     }
-    stage.update();
 }
 
 function randomMe(low, high) {
@@ -98,7 +98,6 @@ function onInit() {
 	background = new createjs.Shape();
 	background.graphics.beginFill("#FFFFFF").drawRect(0,0,280,300);
 	stage.addChild(background);
-	stage.update();
 
     // is a touch screen supported?
     if (createjs.Touch.isSupported()) {
@@ -176,11 +175,11 @@ function onSetup() {
     stage.addEventListener("computerFinished", onComputerFinished, true);
     stage.addEventListener("turnFinished", onTurnFinished, true);
 
+    // startup the ticker
+    createjs.Ticker.setFPS(frameRate);
+    createjs.Ticker.addEventListener("tick", onTick);
     // listener for browser resize (on desktop) to resize game
     window.addEventListener("resize", onResize);
-
-    // update the stage
-    stage.update();
 }
 
 function onResize(e) {
@@ -207,7 +206,6 @@ function onResize(e) {
         canvas.width = BASE_WIDTH * scaleRatio;
         canvas.height = BASE_HEIGHT * scaleRatio;
     }
-    stage.update();
 }
 
 function onComputerFinished(e) {
@@ -283,6 +281,10 @@ function onReset(e) {
     stage.removeChild(winLine);
     // reset the game
 	resetMe();
+}
+
+function onTick(e) {
+    stage.update();
 }
 
 // ------------------------------------------------------ game entry point

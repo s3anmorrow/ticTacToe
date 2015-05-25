@@ -40,12 +40,10 @@ var TicTac = function(assetManager, stage, mobile) {
 
     function onOver(e) {
         sprite.gotoAndStop("ticTacNone_over");
-        stage.update();
     }
 
     function onOut(e) {
         sprite.gotoAndStop("ticTacNone_up");
-        stage.update();
     }
     // ------------------------------------------------ public methods
     this.positionMe = function(x,y) {
@@ -62,7 +60,6 @@ var TicTac = function(assetManager, stage, mobile) {
         // the event travels up from the stage to the target (capture / target) (sprite in this case) and back down again (bubble)
         sprite.dispatchEvent(eventTurnFinished);
         sprite.dispatchEvent(eventPlayerFinished);
-        stage.update();
     };
 
     this.computeMe = function() {
@@ -72,7 +69,6 @@ var TicTac = function(assetManager, stage, mobile) {
         this.disableMe();
         sprite.dispatchEvent(eventTurnFinished);
         sprite.dispatchEvent(eventComputerFinished);
-        stage.update();
     };
 
     this.disableMe = function() {
@@ -97,6 +93,5 @@ var TicTac = function(assetManager, stage, mobile) {
         type = "NONE";
         sprite.gotoAndStop("ticTacNone_up");
         this.enableMe();
-		stage.update();
     };
 };

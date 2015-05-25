@@ -27,12 +27,12 @@
 	<preference name="SplashScreen" value="screen" />
 	<preference name="SplashScreenDelay" value="3000" />
 
-	<icon gap:platform="android" gap:qualifier="ldpi" gap:density="ldpi" src="assets/icon/icon.png" />
-    <icon gap:platform="android" gap:qualifier="mdpi" gap:density="mdpi" src="assets/icon/icon.png" />
-    <icon gap:platform="android" gap:qualifier="hdpi" gap:density="hdpi" src="assets/icon/icon.png" />
-    <icon gap:platform="android" gap:qualifier="xhdpi" gap:density="xhdpi" src="assets/icon/icon.png" />
-	<icon gap:platform="android" gap:qualifier="xxhdpi" gap:density="xxhdpi" src="assets/icon/icon.png" />
-	<icon gap:platform="android" gap:qualifier="xxxhdpi" gap:density="xxxhdpi" src="assets/icon/icon.png" />
+	<icon gap:platform="android" gap:qualifier="ldpi" gap:density="ldpi" src="lib/icon.png" />
+    <icon gap:platform="android" gap:qualifier="mdpi" gap:density="mdpi" src="lib/icon.png" />
+    <icon gap:platform="android" gap:qualifier="hdpi" gap:density="hdpi" src="lib/icon.png" />
+    <icon gap:platform="android" gap:qualifier="xhdpi" gap:density="xhdpi" src="lib/icon.png" />
+	<icon gap:platform="android" gap:qualifier="xxhdpi" gap:density="xxhdpi" src="lib/icon.png" />
+	<icon gap:platform="android" gap:qualifier="xxxhdpi" gap:density="xxxhdpi" src="lib/icon.png" />
 
 	<splash gap:platform="android" gap:qualifier="ldpi" gap:density="ldpi" width="240" height="320" src="assets/splash/screen-ldpi.9.png" />
     <splash gap:platform="android" gap:qualifier="mdpi" gap:density="mdpi" width="320" height="480" src="assets/splash/screen-mdpi.9.png" />
