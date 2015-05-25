@@ -3,18 +3,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Tic Tac Toe : Turn Based Game Demo</title>
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1.0" />
+        <title>Tic Tac Toe : Turn Based Game Case Study</title>
 		<link rel="stylesheet" type="text/css" href="styles.css" />
         <script type="text/javascript" src="http://code.createjs.com/preloadjs-0.4.1.min.js"></script>
+        <script type="text/javascript" src="http://code.createjs.com/soundjs-0.5.2.min.js"></script>
 		<script type="text/javascript" src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+        <script type="text/javascript" src="Manifest.js"></script>
         <script type="text/javascript" src="AssetManager.js"></script>
-        <script type="text/javascript" src="SimpleButtonBehaviour.js"></script>
+        <script type="text/javascript" src="ButtonBuilder.js"></script>
         <script type="text/javascript" src="TicTac.js"></script>
 		<script type="text/javascript" src="Game.js"></script>
 	</head>
     <body onload="onInit();">
-        <canvas id="stage" style="width:280px;height:300px;margin-left:10px;margin-top:10px"></canvas>
-        <div style="margin-top:10px;margin-left:10px;">Tic Tac Toe [HTML5 Version] : Sean Morrow [May 6, 2014] :)</div>
-        <div id="fps" style="margin-left:10px;"></div>
+        <div id="gameWrapper">
+            <canvas id="stage"></canvas>
+        </div>
     </body>
 </html>

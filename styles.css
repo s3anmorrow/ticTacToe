@@ -2,8 +2,27 @@ body {
 	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
-	background: #6699CC;
+	background: #FFFFFF;
 	font-family: verdana,arial,helvetica,sans-serif;
 	font-size: 11px;
-	color: #FFFFFF;
+	color: #000000;
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+}
+
+#stage {
+    width:280px;
+    height:300px;
+    margin-left:10px;
+    margin-top:10px;
+    border-style:none;
+    border-width:1px;
+    background: #CCCCCC;
+}
+
+#gameWrapper {
+    margin:0 auto;
+    width:280px;
 }

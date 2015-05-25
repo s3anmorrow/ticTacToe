@@ -1,26 +1,28 @@
-// hacking static constants
-var TicTac = function() {
-    // private game variables
-    var stage = window.stage;
-    var assetManager = window.assetManager;
-
-    // initialization
-    var type = TicTacState.NONE;
+var TicTac = function(assetManager, stage, mobile) {
+    // private property variables
+    var type = "NONE";
+    // reference to itself for scoping issues
+    var me = this;
 
     // construct custom event object for plane being killed
     var eventTurnFinished = new createjs.Event("turnFinished", true);
     var eventComputerFinished = new createjs.Event("computerFinished", true);
     var eventPlayerFinished = new createjs.Event("playerFinished", true);
 
-    // grab clip for TicTac and add to stage canvas
-    var clip = assetManager.getClip("TicTac");
-    clip.gotoAndStop(type);
-    stage.addChild(clip);
+    // grab sprite for TicTac and add to stage canvas
+    var sprite = assetManager.getSprite("assets");
+    sprite.gotoAndStop("ticTacNone_up");
+    stage.addChild(sprite);
 
-    // setup event listeners using on() (instead of addEventListener - gives more power and can select scope that event handler runs in!)
-    var clickListener = clip.on("click", onClick, this);
-    var overListener = clip.on("mouseover", onOver, this);
-    var outListener = clip.on("mouseout", onOut, this);
+    // setup event listeners
+    if (!mobile) {
+        sprite.addEventListener("click", onClick);
+        sprite.addEventListener("mouseover", onOver);
+        sprite.addEventListener("mouseout", onOut);
+    } else {
+        sprite.addEventListener("pressup", onClick);
+        sprite.addEventListener("mousedown", onOver);
+    }
 
     // ------------------------------------------------ get/set methods
     this.getType = function() {
@@ -30,77 +32,71 @@ var TicTac = function() {
     // ------------------------------------------------ event handler
     function onClick(e) {
         // player selecting ticTac
-        this.playMe(); // WITHOUT using on() this would need to be me.playMe() with var me = this; above
-        // stop click from propogating further
-        e.preventDefault();
+        // scope issue! This only occurs if you have a private method trying to call a public method
+        // this refers to the onClick() function itself and not the TicTac object
+        // hack is to setup a global variable pointing to this to use internally
+        me.playMe();
     }
 
     function onOver(e) {
-        clip.gotoAndStop(type + 1);
+        sprite.gotoAndStop("ticTacNone_over");
         stage.update();
     }
 
     function onOut(e) {
-        clip.gotoAndStop(type);
+        sprite.gotoAndStop("ticTacNone_up");
         stage.update();
     }
-
     // ------------------------------------------------ public methods
     this.positionMe = function(x,y) {
-        clip.x = x;
-        clip.y = y;
+        sprite.x = x;
+        sprite.y = y;
     };
 
     this.playMe = function() {
-        type = TicTacState.X;
-        // adjust frame
-        clip.gotoAndStop(type);
+        type = "X";
+        sprite.gotoAndStop("ticTacX");
         this.disableMe();
 
         // you need to dispatch your custom event from a displayObject that is on the stage
-        // the event travels up from the stage to the target (capture / target) (clip in this case) and back down again (bubble)
-        clip.dispatchEvent(eventTurnFinished);
-        clip.dispatchEvent(eventPlayerFinished);
+        // the event travels up from the stage to the target (capture / target) (sprite in this case) and back down again (bubble)
+        sprite.dispatchEvent(eventTurnFinished);
+        sprite.dispatchEvent(eventPlayerFinished);
         stage.update();
     };
 
     this.computeMe = function() {
-        type = TicTacState.O;
         // adjust frame
-        clip.gotoAndStop(type);
+        type = "O";
+        sprite.gotoAndStop("ticTacO");
         this.disableMe();
-        clip.dispatchEvent(eventTurnFinished);
-        clip.dispatchEvent(eventComputerFinished);
+        sprite.dispatchEvent(eventTurnFinished);
+        sprite.dispatchEvent(eventComputerFinished);
+        stage.update();
     };
 
     this.disableMe = function() {
         // disables the TicTac object
-        clip.off("click", clickListener);
-        clip.off("mouseover", overListener);
-        clip.off("mouseout", outListener);
+        sprite.removeAllEventListeners();
     };
 
     this.enableMe = function() {
-        // only enable if required - with on you can have mulitple events of same name attached to the same target
-        if (!clip.hasEventListener("click")) {
-            // enables the TicTac object
-            clickListener = clip.on("click", onClick, this);
-            overListener = clip.on("mouseover", onOver, this);
-            outListener = clip.on("mouseout", onOut, this);
+        // enables the TicTac object
+        if (!mobile) {
+            sprite.addEventListener("click", onClick);
+            sprite.addEventListener("mouseover", onOver);
+            sprite.addEventListener("mouseout", onOut);
+        } else {
+            sprite.addEventListener("pressup", onClick);
+            sprite.addEventListener("mousedown", onOver);
         }
     };
 
     this.resetMe = function() {
         // resetting the TicTac object back to initial state
-        type = TicTacState.NONE;
-        clip.gotoAndStop(type);
+        type = "NONE";
+        sprite.gotoAndStop("ticTacNone_up");
         this.enableMe();
+		stage.update();
     };
- };
-
-// hacking static constants
-var TicTacState = {
-	"NONE":0,
-	"X":2,
-	"O":4
 };

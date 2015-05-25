@@ -8,30 +8,12 @@
 * > Call loadAssets(manifest) method and provide loading manifest as argument
 * > AssetManager will handle preloading all assets (images or sound)
 *
-* Manifest can take two different approaches:
-* Simple Approach:
 * var manifest = [
-*     {src:"lib/Snake.png", id:"Snake", data:{
-*     width:108, height:73, regPoint:"TopLeft",
-*     animations:{alive:[0,11], dead:[12,39]}}}
-* ];
-* > regPoint can be "TopLeft" or "Center"
-* > you can omit the animations if the sprite only contains one animation sequence
-* var manifest = [
-*     {src:"lib/Snake.png", id:"Snake", data:{
-*     width:108, height:73, framecount:20, regPoint:"TopLeft",
-*     animations:{}}}
-* ];
-* > in this case you can add a count property to specify exactly how many frames your animation lasts.
-* Not usually required, however if the spritesheet has any blank frames at the end they will be included
-* in the animation without the inclusion of the frame count property
-* > disadvantage of this approach is that you can't really mix up different sprites on the same sprite sheet which
-* results in a lot more spritesheets needing to be downloaded on game startup
-*
-* Detailed Approach:
-* var manifest = [
-*   {src:"lib/Snake.png", id:"Snake", data:{
-*        frames:[
+*   {src:"lib/Snake.png",
+    id:"Snake",
+    data:{
+*       images:["lib/Snake.png"],
+        frames:[
 *            [0, 0, 128, 128, 0, -2, 1],
 *            [128, 0, 128, 128, 0, -2, 1],
 *            [256, 0, 128, 128, 0, -2, 1],
@@ -63,120 +45,109 @@
 * > note that when using zoe all your sprite animations need to be on the main timeline with frame labels
 * > you also want to include an empty movieclip with instance name "registrationPoint" to mark where reg point is located
 *
-* > to get a sprite at anytime call getClip(id) and provide id of sprite you want to retrieve and it returns the sprite for usage
+* > to get a sprite at anytime call getSprite(id) and provide id of sprite you want to retrieve and it returns the sprite for usage
 */
 
 var AssetManager = function() {
-	// keep track of assets
+    // keep track of assets
     var manifest = null;
-	var counter = -1;
-	var total = -1;
-	// array of spritesheet objects
-	var spriteSheets = [];
-	//var sounds = [];
-	// preloader object
-	preloader = new createjs.LoadQueue();
+    var counter = -1;
+    var total = -1;
+    // array of spritesheet objects
+    var spriteSheets = [];
+    // LoadQueue object
+    preloader = new createjs.LoadQueue();
 
-	// construct custom event object and initialize it
-	var eventAssetLoaded = new createjs.Event("onAssetLoaded");
-	var eventAllLoaded = new createjs.Event("onAssetsLoaded");
+    // construct custom event object and initialize it
+    var eventAssetLoaded = new createjs.Event("onAssetLoaded");
+    var eventAllLoaded = new createjs.Event("onAllAssetsLoaded");
 
 	// ------------------------------------------------------ event handlers
-	onLoaded = function(e) {
-		// what type of asset was loaded?
-		switch(e.item.type) {
-			case createjs.LoadQueue.IMAGE:
-				// spritesheet loaded
-				var source = e.item.src;
-				var data = e.item.data;
-                var framesData = null;
+    function onLoaded(e) {
 
-                if ((data.regPoint === undefined) && (data.width === undefined) && (data.height === undefined)) {
-                    // the manifest contains a frames array (outlines dimensions, reg point, etc for EACH frame)
-                    // this approach is used if you want to have ALL your assets in large files. Use CreateJS ZOE to generate the JSON
-                    framesData = data.frames;
-                } else {
-                    // the manifest contains a frames object outlining properties of all frames in sprite
-                    // determine registration point of sprite
-                    var x = 0;
-                    var y = 0;
-                    if (data.regPoint == "center"){
-                        x = Math.floor(data.width/2);
-                        y = Math.floor(data.height/2);
-                    }
-                    // construct frames property object
-                    framesData = {width:data.width, height:data.height, regX:x, regY:y};
-                    // add in count property if provided
-                    if (data.framecount !== undefined) framesData.count = data.framecount;
-                }
+        console.log("asset loaded: " + e.item.src);
+
+        // what type of asset was loaded?
+        switch(e.item.type) {
+            case createjs.LoadQueue.IMAGE:
+                // spritesheet loaded
+                // get id and source from manifest of currently loaded spritesheet
+                var id = e.item.id;
+                // store a reference to the actual image that was preloaded
+                var image = e.result;
+                // get data object from manifest of currently loaded spritesheet
+                var data = e.item.data;
+                // add images property to data object and tack on loaded spritesheet image from LoadQueue
+                // this is so that the SpriteSheet constructor doesn't preload the image again
+                // it will do this if you feed it the string path of the spritesheet
+                data.images = [image];
 
                 // construct Spritesheet object from source
-				spriteSheet = new createjs.SpriteSheet({
-                    images:[source],
-					frames:framesData,
-					animations: data.animations
-				});
+                var spriteSheet = new createjs.SpriteSheet(data);
 
-				// store spritesheet object for later retrieval
-				spriteSheets[e.item.id] = spriteSheet;
-
-				break;
-			case createjs.LoadQueue.SOUND:
-				// sound loaded
-				// not sure we need with SoundJS
-				//sounds.push(e.result);
-				break;
+                // store spritesheet object for later retrieval
+                spriteSheets[id] = spriteSheet;
+                break;
+            case createjs.LoadQueue.SOUND:
+                // sound loaded
+                break;
         }
+
         // keeping track of how many loaded?
         counter++;
         // an asset has been loaded
         stage.dispatchEvent(eventAssetLoaded);
-        console.log("asset loaded: " + e.result.src);
-	};
+    }
 
-	//called if there is an error loading the spriteSheet (usually due to a 404)
-	onError = function(e) {
-		console.log("Preloader > Error Loading asset");
-	};
+    //called if there is an error loading the spriteSheet (usually due to a 404)
+    function onError(e) {
+        console.log("Preloader > Error Loading asset");
+    }
 
-	onComplete = function(e) {
-		if (counter >= total) {
-			// dispatch event that all assets are loaded
-			stage.dispatchEvent(eventAllLoaded);
-        }
-	};
+    function onComplete(e) {
+        console.log("All assets loaded");
+
+        // kill event listeners
+        preloader.removeEventListener("fileload", onLoaded);
+        preloader.removeEventListener("error", onError);
+        preloader.removeEventListener("complete", onComplete);
+        // dispatch event that all assets are loaded
+        stage.dispatchEvent(eventAllLoaded);
+    }
 
 	// ------------------------------------------------------ public methods
-	this.getClip = function(id) {
-		// construct sprite object to animate the frames (I call this a clip)
-		var sprite = new createjs.Sprite(spriteSheets[id]);
-		sprite.name = id;
-		sprite.x = 0;
-		sprite.y = 0;
-		sprite.currentFrame = 0;
-		return sprite;
-	};
-
-    this.getSpriteSheet = function(id) {
-        return spriteSheets[id];
+    this.getSprite = function(id) {
+        // construct sprite object to animate the frames (I call this a clip)
+        var sprite = new createjs.Sprite(spriteSheets[id]);
+        sprite.name = id;
+        sprite.x = 0;
+        sprite.y = 0;
+        sprite.currentFrame = 0;
+        return sprite;
     };
 
-	this.getProgress = function() {
-		return (counter/total);
+    this.getProgress = function() {
+        return (counter/total);
+    };
+
+	this.getSpriteSheet = function(id) {
+		return spriteSheets[id];
 	};
 
-	this.loadAssets = function(myManifest) {
-		// setup manifest
+    this.loadAssets = function(myManifest) {
+        // setup manifest
         manifest = myManifest;
-		counter = 0;
-		total = manifest.length;
-		// registers the PreloadJS object with SoundJS - will automatically have access to all sound assets
-		preloader.installPlugin(createjs.SoundJS);
-        preloader.on("fileload", onLoaded);
-        preloader.on("error", onError);
-        preloader.on("complete", onComplete);
-		preloader.setMaxConnections(5);
-		// load first spritesheet to start preloading process
-		preloader.loadManifest(manifest);
-	};
+        counter = 0;
+        total = manifest.length;
+        // if browser doesn't suppot the ogg it will attempt to look for an mp3
+        createjs.Sound.alternateExtensions = ["mp3","wav"];
+        // registers the PreloadJS object with SoundJS - will automatically have access to all sound assets
+        preloader.installPlugin(createjs.Sound);
+        preloader.addEventListener("fileload", onLoaded);
+        preloader.addEventListener("error", onError);
+        preloader.addEventListener("complete", onComplete);
+        preloader.setMaxConnections(5);
+        // load first spritesheet to start preloading process
+        preloader.loadManifest(manifest);
+    };
 };
